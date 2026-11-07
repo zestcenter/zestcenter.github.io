@@ -226,7 +226,7 @@ function card(p, isInfo){
       </div>
       <div class="acts ${isInfo && p.form_url ? '' : 'only'}">
         ${isInfo && p.form_url ? `<a class="applylink ${closed ? 'off' : ''}" href="${esc(p.form_url)}" target="_blank" rel="noopener">APPLY NOW <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>` : ''}
-        <button type="button" class="ic sh" data-share="${esc(p.id)}" data-t="${esc(title)}" data-img="${esc(p.image_url || '')}" aria-label="Share"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>${icons}
+        <button type="button" class="ic sh" data-share="${esc(p.id)}" data-t="${esc(title)}" data-img="${esc(p.image_url || '')}" data-k="${isInfo ? 'info' : 'program'}" aria-label="Share"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>${icons}
       </div>
     </div>
   </article>`;
@@ -246,41 +246,61 @@ function jump(){
   }, 120));
 }
 /* builds the picture that is shared: poster with a ZEST logo strip, or a branded title card */
-async function shareImage(src, title){
-  const W = 1080, logo = document.querySelector('header img');
+let WLOGO = null;
+/* white version of the logo (light background removed) */
+function whiteLogo(){
+  if(WLOGO) return WLOGO;
+  const img = document.querySelector('header img'), c = document.createElement('canvas');
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+  for(let i = 0; i < p.length; i += 4){
+    const lum = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+    const a = Math.max(0, Math.min(255, (235 - lum) * 1.6));
+    p[i] = p[i + 1] = p[i + 2] = 255; p[i + 3] = a;
+  }
+  x.putImageData(d, 0, 0);
+  return WLOGO = c;
+}
+/* builds the picture that is shared: poster (or title card) + blue ZEST strip */
+async function shareImage(src, title, kind){
+  const W = 1080, SITE = 'zestcenter.github.io', prog = kind === 'program';
   await Promise.race([document.fonts ? document.fonts.ready : null, new Promise(r => setTimeout(r, 1500))]);
+  const BAR = prog ? 270 : 210;
   const c = document.createElement('canvas'), x = c.getContext('2d');
-  const BAR = 210, SITE = 'zestcenter.github.io';
   const strip = (y) => {
-    x.fillStyle = '#fff'; x.fillRect(0, y, W, BAR);
-    x.fillStyle = '#0F78A8'; x.fillRect(0, y, W, 8);
-    const lh = 150, lw = logo.naturalWidth * lh / logo.naturalHeight;
-    x.drawImage(logo, 44, y + 8 + (BAR - 8 - lh) / 2, lw, lh);
-    x.textAlign = 'right'; x.textBaseline = 'middle';
-    x.fillStyle = '#0A4F70'; x.font = "800 40px 'Plus Jakarta Sans', sans-serif";
-    x.fillText('ZEST CENTER INFO', W - 44, y + 8 + (BAR - 8) / 2 - 24);
-    x.fillStyle = '#5B7482'; x.font = "600 32px 'Plus Jakarta Sans', sans-serif";
-    x.fillText(SITE, W - 44, y + 8 + (BAR - 8) / 2 + 28);
+    x.fillStyle = '#0F78A8'; x.fillRect(0, y, W, BAR);
+    const lg = whiteLogo(), lh = 140, lw = lg.width * lh / lg.height;
+    x.drawImage(lg, 48, y + (BAR - lh) / 2, lw, lh);
+    x.textAlign = 'right'; x.textBaseline = 'middle'; x.fillStyle = '#fff';
+    const R = W - 48, F = "'Plus Jakarta Sans', 'Noto Sans Malayalam', sans-serif";
+    const rows = prog
+      ? [["600 34px " + F, 'ZEST CENTREൽ നടക്കുന്ന'], ["600 34px " + F, 'പരിപാടികളും'], ["600 34px " + F, 'പദ്ധതികളും ഇനി വേഗത്തിലറിയാം'], ["800 38px " + F, SITE]]
+      : [["800 36px " + F, 'TO APPLY & FOR MORE DETAILS :'], ["800 40px " + F, SITE]];
+    const lh2 = prog ? 52 : 58, top = y + BAR / 2 - (rows.length - 1) * lh2 / 2;
+    rows.forEach(([f, t], i) => { x.font = f; x.fillText(t, R, top + i * lh2); });
   };
   if(src){
-    const bmp = await createImageBitmap(await (await fetch(src)).blob());
-    const h = Math.round(bmp.height * W / bmp.width);
+    const blob = await (await fetch(src)).blob(), u = URL.createObjectURL(blob);
+    const bmp = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = u; });
+    const h = Math.round(bmp.naturalHeight * W / bmp.naturalWidth);
     c.width = W; c.height = h + BAR;
     x.drawImage(bmp, 0, 0, W, h);
     strip(h);
   } else {
-    c.width = W; c.height = 1080;
-    x.fillStyle = '#F3F8FB'; x.fillRect(0, 0, W, 1080);
-    x.fillStyle = '#fff'; x.beginPath(); x.roundRect ? x.roundRect(60, 70, W - 120, 1080 - 70 - BAR - 60, 40) : x.rect(60, 70, W - 120, 1080 - 70 - BAR - 60); x.fill();
-    x.fillStyle = '#0F78A8'; x.fillRect(60, 70, 14, 1080 - 70 - BAR - 60);
+    const H = 1080; c.width = W; c.height = H;
+    x.fillStyle = '#F3F8FB'; x.fillRect(0, 0, W, H);
+    const bh = H - 70 - BAR - 60;
+    x.fillStyle = '#fff'; x.beginPath(); x.roundRect ? x.roundRect(60, 70, W - 120, bh, 40) : x.rect(60, 70, W - 120, bh); x.fill();
+    x.fillStyle = '#0F78A8'; x.fillRect(60, 70, 14, bh);
     x.fillStyle = '#0A4F70'; x.textAlign = 'left'; x.textBaseline = 'top';
     x.font = "800 66px 'Plus Jakarta Sans', 'Noto Sans Malayalam', sans-serif";
     const words = String(title).split(/\s+/), lines = []; let line = '';
     for(const w of words){ const t = line ? line + ' ' + w : w; if(x.measureText(t).width > W - 260 && line){ lines.push(line); line = w; } else line = t; }
     if(line) lines.push(line);
-    const shown = lines.slice(0, 7), lh = 92, top = 70 + (1080 - 70 - BAR - 60 - shown.length * lh) / 2;
+    const shown = lines.slice(0, 6), lh = 92, top = 70 + (bh - shown.length * lh) / 2;
     shown.forEach((l, i) => x.fillText(l, 130, top + i * lh));
-    strip(1080 - BAR);
+    strip(H - BAR);
   }
   return await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.9));
 }
@@ -298,7 +318,7 @@ document.addEventListener('click', async ev => {
   if(navigator.canShare){
     try{
       b.disabled = true;
-      const blob = await shareImage(b.dataset.img, title);
+      const blob = await shareImage(b.dataset.img, title, b.dataset.k);
       const file = new File([blob], 'zest-post.jpg', {type: 'image/jpeg'});
       if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text, title}); b.disabled = false; return; }
     }catch(e){ b.disabled = false; if(e && e.name === 'AbortError') return; }
