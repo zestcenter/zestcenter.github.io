@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0F78A8">
 <title>ZEST CENTER INFO</title>
+<meta name="description" content="ZEST CENTREൽ നടക്കുന്ന പരിപാടികളും പരീക്ഷകൾ, അപേക്ഷ സമർപ്പണം, സ്കോളർഷിപ്പുകൾ തുടങ്ങിയ അറിയിപ്പുകളും">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ZEST CENTER INFO">
+<meta property="og:title" content="ZEST CENTER INFO – പരിപാടികളും അറിയിപ്പുകളും">
+<meta property="og:description" content="ZEST CENTREൽ നടക്കുന്ന പരിപാടികളും പരീക്ഷകൾ, അപേക്ഷ സമർപ്പണം, സ്കോളർഷിപ്പുകൾ തുടങ്ങിയ അറിയിപ്പുകളും ഇനി വേഗത്തിലറിയാം">
+<meta property="og:url" content="https://zestcenter.github.io/">
+<meta property="og:image" content="https://zestcenter.github.io/og.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="599">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
 <!--
@@ -216,7 +226,7 @@ function card(p, isInfo){
       </div>
       <div class="acts ${isInfo && p.form_url ? '' : 'only'}">
         ${isInfo && p.form_url ? `<a class="applylink ${closed ? 'off' : ''}" href="${esc(p.form_url)}" target="_blank" rel="noopener">APPLY NOW <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>` : ''}
-        <button type="button" class="ic sh" data-share="${esc(p.id)}" data-t="${esc(title)}" aria-label="Share"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>${icons}
+        <button type="button" class="ic sh" data-share="${esc(p.id)}" data-t="${esc(title)}" data-img="${esc(p.image_url || '')}" aria-label="Share"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>${icons}
       </div>
     </div>
   </article>`;
@@ -244,7 +254,18 @@ document.addEventListener('click', async ev => {
   const b = ev.target.closest('[data-share]'); if(!b) return;
   const url = location.origin + location.pathname + '#p-' + b.dataset.share;
   const title = b.dataset.t || 'ZEST CENTER INFO';
-  if(navigator.share){ try{ await navigator.share({title, text: title + ' – ZEST CENTER INFO', url}); return; }catch(e){ if(e && e.name === 'AbortError') return; } }
+  const text = title + '\n\nകൂടുതൽ വിവരങ്ങൾക്ക്: ' + url;
+  /* share the poster image itself, so WhatsApp shows the picture */
+  if(b.dataset.img && navigator.canShare){
+    try{
+      b.disabled = true;
+      const r = await fetch(b.dataset.img); const blob = await r.blob();
+      const file = new File([blob], 'zest-post.jpg', {type: blob.type || 'image/jpeg'});
+      if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text, title}); b.disabled = false; return; }
+    }catch(e){ b.disabled = false; if(e && e.name === 'AbortError') return; }
+    b.disabled = false;
+  }
+  if(navigator.share){ try{ await navigator.share({title, text}); return; }catch(e){ if(e && e.name === 'AbortError') return; } }
   try{ await navigator.clipboard.writeText(url); toast('ലിങ്ക് കോപ്പി ചെയ്തു ✓'); }
   catch(_){ prompt('Copy this link:', url); }
 });
