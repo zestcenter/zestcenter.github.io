@@ -318,7 +318,10 @@ document.addEventListener('click', async ev => {
   if(navigator.canShare){
     try{
       b.disabled = true;
-      const blob = await shareImage(b.dataset.img, title, b.dataset.k);
+      const prog = b.dataset.k === 'program';
+      if(prog && !b.dataset.img) throw 0;   // programs without a poster: share the link only
+      /* programs: the original poster; info posts: poster/card with the blue ZEST strip */
+      const blob = prog ? await (await fetch(b.dataset.img)).blob() : await shareImage(b.dataset.img, title, 'info');
       const file = new File([blob], 'zest-post.jpg', {type: 'image/jpeg'});
       if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text, title}); b.disabled = false; return; }
     }catch(e){ b.disabled = false; if(e && e.name === 'AbortError') return; }
