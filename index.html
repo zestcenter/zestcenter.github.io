@@ -147,6 +147,11 @@ section.blk{margin:26px 16px 0}
 </section>
 
 <section class="blk">
+  <h2 class="h">JOB CONNECT</h2>
+  <div class="list" id="jobs"><div class="skel"></div></div>
+</section>
+
+<section class="blk">
   <h2 class="h">ZEST GALLERY</h2>
   <div class="gal">
     <div id="igbox"></div>
@@ -334,10 +339,12 @@ document.addEventListener('click', async ev => {
 addEventListener('hashchange', () => { jumped = false; jump(); });
 function render(rows, demo){
   const prog = rows.filter(r => r.kind === 'program');
-  const info = rows.filter(r => r.kind !== 'program');
+  const info = rows.filter(r => r.kind !== 'program' && r.kind !== 'job');
+  const jobs = rows.filter(r => r.kind === 'job');
   $('programs').innerHTML = prog.length ? prog.map(p => card(p, false)).join('') : EMPTY;
   $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? info.map(p => card(p, true)).join('') : EMPTY);
-  requestAnimationFrame(() => { wireMore($('info')); wireMore($('programs')); });
+  $('jobs').innerHTML = jobs.length ? jobs.map(p => card(p, true)).join('') : EMPTY;
+  requestAnimationFrame(() => { wireMore($('info')); wireMore($('programs')); wireMore($('jobs')); });
 }
 const DEMO = [
   {id:1, kind:'info', created_at:new Date().toISOString(), body:"*Higher Secondary Scholarship 2026*\nപ്ലസ് വൺ, പ്ലസ് ടു വിദ്യാർത്ഥികൾക്കുള്ള സ്കോളർഷിപ്പിന് ഇപ്പോൾ അപേക്ഷിക്കാം. ആവശ്യമായ രേഖകൾ: മാർക്ക് ലിസ്റ്റ്, വരുമാന സർട്ടിഫിക്കറ്റ്, ആധാർ.", last_date:new Date(Date.now()+10*864e5).toISOString().slice(0,10), ref_no:"ZEST/SCH/26", form_url:"https://forms.google.com"},
@@ -366,7 +373,7 @@ async function start(){
     document.addEventListener('visibilitychange', () => { if(!document.hidden) load(); });
   }catch(e){
     const m = '<div class="state">അപ്ഡേറ്റുകൾ ലോഡ് ചെയ്യാനായില്ല. റിഫ്രഷ് ചെയ്യുക.</div>';
-    $('programs').innerHTML = m; $('info').innerHTML = m;
+    $('programs').innerHTML = m; $('info').innerHTML = m; $('jobs').innerHTML = m;
   }
 }
 function gallery(){
