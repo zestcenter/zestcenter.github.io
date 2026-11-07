@@ -245,6 +245,45 @@ function jump(){
     el.classList.add('hl');
   }, 120));
 }
+/* builds the picture that is shared: poster with a ZEST logo strip, or a branded title card */
+async function shareImage(src, title){
+  const W = 1080, logo = document.querySelector('header img');
+  await Promise.race([document.fonts ? document.fonts.ready : null, new Promise(r => setTimeout(r, 1500))]);
+  const c = document.createElement('canvas'), x = c.getContext('2d');
+  const BAR = 210, SITE = 'zestcenter.github.io';
+  const strip = (y) => {
+    x.fillStyle = '#fff'; x.fillRect(0, y, W, BAR);
+    x.fillStyle = '#0F78A8'; x.fillRect(0, y, W, 8);
+    const lh = 150, lw = logo.naturalWidth * lh / logo.naturalHeight;
+    x.drawImage(logo, 44, y + 8 + (BAR - 8 - lh) / 2, lw, lh);
+    x.textAlign = 'right'; x.textBaseline = 'middle';
+    x.fillStyle = '#0A4F70'; x.font = "800 40px 'Plus Jakarta Sans', sans-serif";
+    x.fillText('ZEST CENTER INFO', W - 44, y + 8 + (BAR - 8) / 2 - 24);
+    x.fillStyle = '#5B7482'; x.font = "600 32px 'Plus Jakarta Sans', sans-serif";
+    x.fillText(SITE, W - 44, y + 8 + (BAR - 8) / 2 + 28);
+  };
+  if(src){
+    const bmp = await createImageBitmap(await (await fetch(src)).blob());
+    const h = Math.round(bmp.height * W / bmp.width);
+    c.width = W; c.height = h + BAR;
+    x.drawImage(bmp, 0, 0, W, h);
+    strip(h);
+  } else {
+    c.width = W; c.height = 1080;
+    x.fillStyle = '#F3F8FB'; x.fillRect(0, 0, W, 1080);
+    x.fillStyle = '#fff'; x.beginPath(); x.roundRect ? x.roundRect(60, 70, W - 120, 1080 - 70 - BAR - 60, 40) : x.rect(60, 70, W - 120, 1080 - 70 - BAR - 60); x.fill();
+    x.fillStyle = '#0F78A8'; x.fillRect(60, 70, 14, 1080 - 70 - BAR - 60);
+    x.fillStyle = '#0A4F70'; x.textAlign = 'left'; x.textBaseline = 'top';
+    x.font = "800 66px 'Plus Jakarta Sans', 'Noto Sans Malayalam', sans-serif";
+    const words = String(title).split(/\s+/), lines = []; let line = '';
+    for(const w of words){ const t = line ? line + ' ' + w : w; if(x.measureText(t).width > W - 260 && line){ lines.push(line); line = w; } else line = t; }
+    if(line) lines.push(line);
+    const shown = lines.slice(0, 7), lh = 92, top = 70 + (1080 - 70 - BAR - 60 - shown.length * lh) / 2;
+    shown.forEach((l, i) => x.fillText(l, 130, top + i * lh));
+    strip(1080 - BAR);
+  }
+  return await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.9));
+}
 function toast(t){
   let e = document.querySelector('.toast');
   if(!e){ e = document.createElement('div'); e.className = 'toast'; document.body.appendChild(e); }
@@ -255,12 +294,12 @@ document.addEventListener('click', async ev => {
   const url = location.origin + location.pathname + '#p-' + b.dataset.share;
   const title = b.dataset.t || 'ZEST CENTER INFO';
   const text = title + '\n\nകൂടുതൽ വിവരങ്ങൾക്ക്: ' + url;
-  /* share the poster image itself, so WhatsApp shows the picture */
-  if(b.dataset.img && navigator.canShare){
+  /* share an image (poster + ZEST logo, or a ZEST title card) so WhatsApp shows a picture */
+  if(navigator.canShare){
     try{
       b.disabled = true;
-      const r = await fetch(b.dataset.img); const blob = await r.blob();
-      const file = new File([blob], 'zest-post.jpg', {type: blob.type || 'image/jpeg'});
+      const blob = await shareImage(b.dataset.img, title);
+      const file = new File([blob], 'zest-post.jpg', {type: 'image/jpeg'});
       if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text, title}); b.disabled = false; return; }
     }catch(e){ b.disabled = false; if(e && e.name === 'AbortError') return; }
     b.disabled = false;
