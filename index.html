@@ -63,6 +63,8 @@ section.blk{margin:26px 16px 0}
 .desc p{white-space:pre-line}
 .desc p+p{margin-top:6px}
 .desc.clamp{max-height:calc(15px * 1.45 * 3);overflow:hidden;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.desc.clamp.short{max-height:calc(15px * 1.45 * 2)}
+.xtra[hidden]{display:none}
 .more{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:0;border:0;background:none;color:var(--p);font:inherit;font-size:13px;font-weight:800;letter-spacing:.06em;cursor:pointer}
 .more[hidden]{display:none}
 .imp{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--tint);border-left:4px solid var(--p);font-size:14px;line-height:1.45}
@@ -169,13 +171,18 @@ const icons = `<a class="ic" href="tel:+${num}" aria-label="Call"><svg viewBox="
 const paras = t => t.split(/\n\s*\n+/).map(x => `<p>${esc(x.trim())}</p>`).join('');
 function wireMore(root){
   root.querySelectorAll('.card').forEach(c => {
-    const d = c.querySelector('.desc.clamp'), b = c.querySelector('.more');
-    if(!d || !b) return;
-    if(d.scrollHeight <= d.clientHeight + 2){ d.classList.remove('clamp'); b.hidden = true; return; }
+    const d = c.querySelector('.desc.clamp'), b = c.querySelector('.more'), x = c.querySelector('.xtra');
+    if(!b) return;
+    const over = d && d.scrollHeight > d.clientHeight + 2;
+    if(d && !over) d.classList.remove('clamp');
+    if(!over && !x){ b.hidden = true; return; }
     b.hidden = false;
     b.onclick = () => {
-      const open = d.classList.toggle('clamp');
-      b.innerHTML = open ? 'READ MORE <span aria-hidden="true">▾</span>' : 'SHOW LESS <span aria-hidden="true">▴</span>';
+      const closed = b.dataset.open === '1';
+      b.dataset.open = closed ? '' : '1';
+      if(d && over) d.classList.toggle('clamp', closed);
+      if(x) x.hidden = closed;
+      b.innerHTML = closed ? `${b.dataset.l} <span aria-hidden="true">▾</span>` : 'SHOW LESS <span aria-hidden="true">▴</span>';
     };
   });
 }
@@ -190,9 +197,10 @@ function card(p, isInfo){
     ${p.image_url ? `<div class="img"><img src="${esc(p.image_url)}" alt="${esc(title)}" loading="lazy" decoding="async"></div>` : ''}
     <div class="cb">
       <h3 class="title">${esc(title)}</h3>
-      ${desc ? `<div class="desc${isInfo ? ' clamp' : ''}">${paras(desc)}</div>` : ''}
-      ${desc && isInfo ? `<button type="button" class="more" hidden>READ MORE <span aria-hidden="true">▾</span></button>` : ''}
-      ${imp ? `<div class="imp"><h4>IMPORTANT DETAILS</h4>${paras(imp)}</div>` : ''}
+      ${desc ? `<div class="desc clamp${isInfo ? '' : ' short'}">${paras(desc)}</div>` : ''}
+      ${!isInfo && imp ? `<div class="xtra" hidden><div class="imp"><h4>IMPORTANT DETAILS</h4>${paras(imp)}</div></div>` : ''}
+      ${desc || (!isInfo && imp) ? `<button type="button" class="more" data-l="${isInfo ? 'READ MORE' : 'VIEW MORE'}" hidden>${isInfo ? 'READ MORE' : 'VIEW MORE'} <span aria-hidden="true">▾</span></button>` : ''}
+      ${isInfo && imp ? `<div class="imp"><h4>IMPORTANT DETAILS</h4>${paras(imp)}</div>` : ''}
       <div class="badges">
         ${isInfo ? `<span class="b">🗓 POST DATE: ${fmt(p.created_at)}</span>` : ''}
         ${!isInfo && p.event_date ? `<span class="b last">🗓 ${fmt(p.event_date)}</span>` : ''}
@@ -211,7 +219,7 @@ function render(rows, demo){
   const info = rows.filter(r => r.kind !== 'program');
   $('programs').innerHTML = prog.length ? prog.map(p => card(p, false)).join('') : EMPTY;
   $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? info.map(p => card(p, true)).join('') : EMPTY);
-  requestAnimationFrame(() => wireMore($('info')));
+  requestAnimationFrame(() => { wireMore($('info')); wireMore($('programs')); });
 }
 const DEMO = [
   {id:1, kind:'info', created_at:new Date().toISOString(), body:"*Higher Secondary Scholarship 2026*\nപ്ലസ് വൺ, പ്ലസ് ടു വിദ്യാർത്ഥികൾക്കുള്ള സ്കോളർഷിപ്പിന് ഇപ്പോൾ അപേക്ഷിക്കാം. ആവശ്യമായ രേഖകൾ: മാർക്ക് ലിസ്റ്റ്, വരുമാന സർട്ടിഫിക്കറ്റ്, ആധാർ.", last_date:new Date(Date.now()+10*864e5).toISOString().slice(0,10), ref_no:"ZEST/SCH/26", form_url:"https://forms.google.com"},
