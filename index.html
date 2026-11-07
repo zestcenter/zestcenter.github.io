@@ -82,6 +82,12 @@ section.blk{margin:26px 16px 0}
 .btn.off{background:#e3ecf1;border-color:#e3ecf1;color:#7d929e;pointer-events:none}
 .ic{flex:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:2px solid var(--p);color:var(--p);background:#fff;transition:transform .2s}
 .ic.wa{border-color:var(--wa);color:#fff;background:var(--wa)}
+.ic.sh{border-color:var(--line);color:var(--p-dark);cursor:pointer;padding:0;font:inherit}
+.card{scroll-margin-top:12px}
+.card.hl{animation:hl 2.4s ease}
+@keyframes hl{0%,40%{box-shadow:0 0 0 4px var(--s)}100%{box-shadow:0 0 0 0 transparent}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;font-size:14px;font-weight:600;padding:10px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+.toast.on{opacity:1}
 .ic:active{transform:scale(.93)}
 .ic svg{width:18px;height:18px;fill:currentColor}
 .applylink{flex:1;display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:13px;letter-spacing:.06em;color:var(--p);text-decoration:none}
@@ -147,6 +153,7 @@ section.blk{margin:26px 16px 0}
 </footer>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.2c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></symbol>
   <symbol id="i-call" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 004.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.01 2.56c.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.16-.48-.29z"/></symbol>
 </svg>
@@ -193,7 +200,7 @@ function card(p, isInfo){
   const im = desc.match(/^[ \t*_~📌🔔⭐️❗️!\-•]*(?:important\s*details|പ്രധാന\s*വിവരങ്ങൾ)[ \t*_~:：\-]*$/im);
   if(im){ imp = desc.slice(im.index + im[0].length).trim(); desc = desc.slice(0, im.index).trim(); }
   const closed = isInfo && p.last_date && new Date(p.last_date + 'T23:59:59') < new Date();
-  return `<article class="card">
+  return `<article class="card" id="p-${esc(p.id)}">
     ${p.image_url ? `<div class="img"><img src="${esc(p.image_url)}" alt="${esc(title)}" loading="lazy" decoding="async"></div>` : ''}
     <div class="cb">
       <h3 class="title">${esc(title)}</h3>
@@ -209,11 +216,39 @@ function card(p, isInfo){
       </div>
       <div class="acts ${isInfo && p.form_url ? '' : 'only'}">
         ${isInfo && p.form_url ? `<a class="applylink ${closed ? 'off' : ''}" href="${esc(p.form_url)}" target="_blank" rel="noopener">APPLY NOW <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>` : ''}
-        ${icons}
+        <button type="button" class="ic sh" data-share="${esc(p.id)}" data-t="${esc(title)}" aria-label="Share"><svg viewBox="0 0 24 24"><use href="#i-share"/></svg></button>${icons}
       </div>
     </div>
   </article>`;
 }
+/* ---- share a single post ---- */
+let jumped = false;
+function jump(){
+  if(jumped) return;
+  const m = location.hash.match(/^#p-([\w-]+)/); if(!m) return;
+  const el = document.getElementById('p-' + m[1]); if(!el) return;
+  jumped = true;
+  requestAnimationFrame(() => setTimeout(() => {
+    const b = el.querySelector('.more');
+    if(b && !b.hidden && !b.dataset.open) b.click();
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    el.classList.add('hl');
+  }, 120));
+}
+function toast(t){
+  let e = document.querySelector('.toast');
+  if(!e){ e = document.createElement('div'); e.className = 'toast'; document.body.appendChild(e); }
+  e.textContent = t; e.classList.add('on'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('on'), 2200);
+}
+document.addEventListener('click', async ev => {
+  const b = ev.target.closest('[data-share]'); if(!b) return;
+  const url = location.origin + location.pathname + '#p-' + b.dataset.share;
+  const title = b.dataset.t || 'ZEST CENTER INFO';
+  if(navigator.share){ try{ await navigator.share({title, text: title + ' – ZEST CENTER INFO', url}); return; }catch(e){ if(e && e.name === 'AbortError') return; } }
+  try{ await navigator.clipboard.writeText(url); toast('ലിങ്ക് കോപ്പി ചെയ്തു ✓'); }
+  catch(_){ prompt('Copy this link:', url); }
+});
+addEventListener('hashchange', () => { jumped = false; jump(); });
 function render(rows, demo){
   const prog = rows.filter(r => r.kind === 'program');
   const info = rows.filter(r => r.kind !== 'program');
@@ -232,10 +267,15 @@ async function start(){
   try{
     await new Promise((ok, no) => { const t = Date.now(); (function w(){ window.supabase ? ok() : Date.now()-t > 8000 ? no() : setTimeout(w, 50); })(); });
     const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+    let last = '';
     const load = async () => {
       const {data, error} = await db.from('posts').select('*').eq('published', true).order('created_at', {ascending:false});
       if(error) throw error;
+      const sig = JSON.stringify(data || []);
+      if(sig === last) return;   // nothing changed – keep what the visitor has open
+      last = sig;
       render(data || []);
+      jump();
     };
     await load();
     db.channel('posts-feed').on('postgres_changes', {event:'*', schema:'public', table:'posts'}, load).subscribe();
