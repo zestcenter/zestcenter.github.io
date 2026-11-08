@@ -1,0 +1,30 @@
+{
+ "name": "ZEST CENTER INFO",
+ "short_name": "ZEST Info",
+ "description": "ZEST CENTREൽ നടക്കുന്ന പരിപാടികളും അറിയിപ്പുകളും തൊഴിൽ ഒഴിവുകളും",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#F3F8FB",
+ "theme_color": "#0F78A8",
+ "lang": "ml",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

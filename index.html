@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0F78A8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ZEST Info">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>ZEST CENTER INFO</title>
 <meta name="description" content="ZEST CENTREൽ നടക്കുന്ന പരിപാടികളും പരീക്ഷകൾ, അപേക്ഷ സമർപ്പണം, സ്കോളർഷിപ്പുകൾ തുടങ്ങിയ അറിയിപ്പുകളും">
 <meta property="og:type" content="website">
@@ -109,6 +116,13 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(10px +
 @keyframes abs{0%,55%{left:-60%}100%{left:130%}}
 @keyframes aba{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
 @media (prefers-reduced-motion:reduce){.aboutbtn,.aboutbtn::after,.aboutbtn svg{animation:none}}
+/* install-app banner */
+.inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px 10px 10px 12px;box-shadow:0 12px 30px rgba(10,79,112,.22);max-width:536px;margin:0 auto;transform:translateY(140%);transition:transform .35s ease}
+.inst.on{transform:none}
+.inst img{width:42px;height:42px;border-radius:11px;border:1px solid var(--line);object-fit:contain;background:#fff;flex:none}
+.inst div{flex:1;min-width:0}.inst b{display:block;font-size:14px;color:var(--p-dark)}.inst small{font-size:11.5px;color:var(--mute);line-height:1.3;display:block}
+.inst .go{flex:none;border:0;border-radius:12px;background:var(--p);color:#fff;font:inherit;font-weight:800;font-size:13px;padding:10px 14px;cursor:pointer}
+.inst .x{flex:none;border:0;background:none;color:var(--mute);font-size:20px;width:32px;height:32px;cursor:pointer}
 section.blk{scroll-margin-top:100px}
 .hero{margin:16px;background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .hero img{display:block;width:100%;height:auto}
@@ -263,6 +277,13 @@ section.blk{margin:26px 16px 0}
     <a href="tel:04962993552" id="land"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-call"/></svg>049602993552</a>
   </div>
 </footer>
+
+<div class="inst" id="inst" role="dialog" aria-label="Install app">
+  <img src="icon-192.png" alt="">
+  <div><b>ZEST Info App</b><small id="insttxt">ഫോണിൽ ആപ്പ് ആയി ചേർക്കാം – ഒറ്റ ടാപ്പിൽ തുറക്കാം</small></div>
+  <button type="button" class="go" id="instgo">INSTALL</button>
+  <button type="button" class="x" id="instx" aria-label="Close">×</button>
+</div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-share" viewBox="0 0 24 24"><path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L16 7.2c.5.5 1.2.8 2 .8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.8-2.9z"/></symbol>
@@ -499,6 +520,25 @@ document.querySelectorAll('.nav a, .lg').forEach(a => a.addEventListener('click'
   const h = a.getAttribute('href');
   if(h === '#') scrollTo({top:0, behavior:'smooth'}); else document.querySelector(h).scrollIntoView({behavior:'smooth', block:'start'});
 }));
+/* ---- app: offline support + install banner ---- */
+if('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+(function(){
+  const box = $('inst'), go = $('instgo'), txt = $('insttxt');
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  let later = 0; try{ later = +localStorage.getItem('zest-inst-later') || 0; }catch(_){}
+  if(standalone || Date.now() - later < 3 * 864e5) return;
+  let ev = null;
+  const show = () => setTimeout(() => box.classList.add('on'), 2500);
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); ev = e; show(); });
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(ios){ txt.textContent = 'Share ⬆️ ബട്ടൺ → "Add to Home Screen" ടാപ്പ് ചെയ്യുക'; go.textContent = 'OK'; show(); }
+  go.onclick = async () => {
+    if(ev){ ev.prompt(); await ev.userChoice.catch(() => {}); ev = null; }
+    box.classList.remove('on');
+  };
+  $('instx').onclick = () => { box.classList.remove('on'); try{ localStorage.setItem('zest-inst-later', Date.now()); }catch(_){} };
+  addEventListener('appinstalled', () => box.classList.remove('on'));
+})();
 gallery();
 start();
 </script>
