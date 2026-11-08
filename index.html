@@ -132,11 +132,13 @@ section.blk{margin:26px 16px 0}
 .igfollow{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;margin:0;border-top:1px solid var(--line);color:var(--p);font-weight:800;font-size:12px;letter-spacing:.06em;text-decoration:none}
 .igfollow:active{background:var(--tint)}
 .gal .instagram-media{min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important;border:0!important}
-.addr{margin:30px 16px 0;background:#fff;border-top:4px solid var(--p);border-radius:0 0 20px 20px;padding:22px 16px calc(24px + env(safe-area-inset-bottom,0px));text-align:center;font-size:15px;line-height:1.7}
+.addr{margin:30px 16px 0;background:#fff;border-top:4px solid var(--p);border-radius:0 0 20px 20px;padding:20px 8px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;font-size:15px;line-height:1.5}
+.addr .run{font-size:clamp(11px,3.35vw,15px);white-space:nowrap}
 .addr .run b{color:var(--p-dark)}
-.addr .ph{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 24px;margin-top:12px}
-.addr .ph a{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:17px;color:var(--ink);text-decoration:none}
-.addr .ph svg{width:16px;height:16px;fill:var(--p)}
+.addr .ad{font-size:clamp(9px,2.78vw,13.5px);white-space:nowrap;margin-top:2px}
+.addr .ph{display:flex;flex-wrap:nowrap;justify-content:center;gap:clamp(12px,5vw,28px);margin-top:6px}
+.addr .ph a{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:clamp(13px,4.2vw,17px);color:var(--ink);text-decoration:none;white-space:nowrap}
+.addr .ph svg{width:1.05em;height:1.05em;fill:var(--p)}
 @media (prefers-reduced-motion:reduce){.aboutbtn,.aboutbtn svg,.ic,.skel{transition:none;animation:none}}
 </style>
 </head>
@@ -191,7 +193,7 @@ section.blk{margin:26px 16px 0}
 
 <footer class="addr">
   <div class="run">Run by <b>ZEST for Peace Charitable Trust (Regd.)</b></div>
-  <div>Kottembram Road, Velloor, P.O. Kodenchery, Calicut - 673503</div>
+  <div class="ad">Kottembram Road, Velloor, P.O. Kodenchery, Calicut - 673503</div>
   <div class="ph">
     <a href="tel:+918848313837"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>+918848313837</a>
     <a href="tel:04962993552" id="land"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-call"/></svg>049602993552</a>
