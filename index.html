@@ -58,6 +58,38 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(10px +
 @media (hover:hover){.nav a:hover{background:var(--p);color:#fff;border-color:var(--p)}}
 .nav a:focus-visible{outline:3px solid var(--s);outline-offset:1px}
 @media (max-width:380px){.bar{padding:8px 8px 8px 10px}.bar .lg img{height:52px}.nav{gap:4px}.nav a{padding:4px 6px;font-size:8px}}
+/* stats tiles */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 16px 16px}
+.st{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px 12px 12px;border-radius:18px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--ink);box-shadow:0 6px 16px rgba(15,120,168,.08);transition:transform .15s}
+.st:active{transform:scale(.96)}
+.st::before{content:"";position:absolute;right:-22px;top:-22px;width:74px;height:74px;border-radius:50%;background:var(--g);opacity:.14}
+.st::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--g)}
+.st .si{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--g);color:#fff;margin-bottom:6px;box-shadow:0 4px 10px rgba(15,120,168,.25)}
+.st .si svg{width:18px;height:18px}
+.st b{font-size:26px;font-weight:800;line-height:1;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.st span{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--p-dark);line-height:1.25}
+.st small{font-size:10px;font-weight:600;color:var(--mute)}
+.st.g1{--g:linear-gradient(135deg,#0F78A8,#35A4CC)}
+.st.g2{--g:linear-gradient(135deg,#0A4F70,#2A8FC4)}
+.st.g3{--g:linear-gradient(135deg,#0E8A84,#3CC2B4)}
+/* timeline */
+.list.tl{position:relative;padding-left:24px;gap:18px}
+.list.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;border-radius:2px;background:linear-gradient(var(--s),var(--line))}
+.tli{position:relative}
+.tli::before{content:"";position:absolute;left:-23px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--p);box-sizing:border-box}
+.tli.new::before{background:#E8344E;border-color:#fff;box-shadow:0 0 0 3px #F8C7CF}
+.tld{font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--p);margin-bottom:6px}
+/* NEW tag + wide info cards */
+.card .img{position:relative}
+.newtag{position:absolute;top:10px;left:10px;z-index:1;background:#E8344E;color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:8px}
+.cb > .newtag{position:static;display:inline-block;margin-bottom:6px}
+.card.wide .img{aspect-ratio:16/9;overflow:hidden;cursor:zoom-in}
+.card.wide .img img{width:100%;height:100%;max-height:none;object-fit:cover}
+.card.wide .zoom{position:absolute;right:10px;bottom:10px;background:rgba(10,30,45,.6);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px}
+.meta{margin-top:4px;font-size:13.5px;color:var(--mute);font-weight:600}
+.lb{position:fixed;inset:0;z-index:50;background:rgba(5,20,30,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+.lb img{max-width:100%;max-height:100%;border-radius:10px}
+.lb button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--ink);font-size:22px;font-weight:800}
 section.blk{scroll-margin-top:100px}
 .hero{margin:16px;background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .hero img{display:block;width:100%;height:auto}
@@ -167,6 +199,11 @@ section.blk{margin:26px 16px 0}
   </div>
 </div>
 
+<nav class="stats" aria-label="Sections">
+  <a class="st g1" href="#sec-programs"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><b id="n-programs">–</b><span>ZEST PROGRAMS</span><small>പരിപാടികൾ</small></a>
+  <a class="st g2" href="#sec-info"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM16 9a4 4 0 010 6M19 6a8 8 0 010 12"/></svg></span><b id="n-info">–</b><span>INFO CENTRE</span><small>അറിയിപ്പുകൾ</small></a>
+  <a class="st g3" href="#sec-jobs"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/></svg></span><b id="n-jobs">–</b><span>JOB CONNECT</span><small>ഒഴിവുകൾ</small></a>
+</nav>
 <div class="aboutwrap" style="margin-top:16px"><a class="aboutbtn" href="https://zestforpeace.org" target="_blank" rel="noopener"><span>ABOUT ZEST</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
 
 <section class="blk" id="sec-programs">
@@ -241,6 +278,8 @@ function wireMore(root){
     };
   });
 }
+const isNew = p => p.created_at && (Date.now() - new Date(p.created_at)) < 3 * 864e5;
+const tl = (rows, isInfo, dateOf) => rows.map(p => `<div class="tli${isNew(p) ? ' new' : ''}"><div class="tld">${dateOf(p)}</div>${card(p, isInfo)}</div>`).join('');
 function card(p, isInfo){
   const lines = String(p.body || '').trim().split(/\r?\n/);
   const title = (lines.shift() || '').replace(/^[*_~\s]+|[*_~\s]+$/g, '');
@@ -248,17 +287,21 @@ function card(p, isInfo){
   const im = desc.match(/^[ \t*_~📌🔔⭐️❗️!\-•]*(?:important\s*details|പ്രധാന\s*വിവരങ്ങൾ)[ \t*_~:：\-]*$/im);
   if(im){ imp = desc.slice(im.index + im[0].length).trim(); desc = desc.slice(0, im.index).trim(); }
   const closed = isInfo && p.last_date && new Date(p.last_date + 'T23:59:59') < new Date();
-  return `<article class="card" id="p-${esc(p.id)}">
-    ${p.image_url ? `<div class="img"><img src="${esc(p.image_url)}" alt="${esc(title)}" loading="lazy" decoding="async"></div>` : ''}
+  const wide = p.kind === 'info' && p.image_url;
+  const nw = isNew(p) ? '<span class="newtag">NEW</span>' : '';
+  return `<article class="card${wide ? ' wide' : ''}" id="p-${esc(p.id)}">
+    ${p.image_url ? `<div class="img"${wide ? ` data-zoom="${esc(p.image_url)}"` : ''}>${nw}<img src="${esc(p.image_url)}" alt="${esc(title)}" loading="lazy" decoding="async">${wide ? '<span class="zoom">⤢ Full poster</span>' : ''}</div>` : ''}
     <div class="cb">
+      ${p.image_url ? '' : nw}
       <h3 class="title">${esc(title)}</h3>
+      ${p.kind === 'info' ? `<div class="meta">🗓 Posted ${fmt(p.created_at)}</div>` : ''}
       ${desc ? `<div class="desc clamp${isInfo ? '' : ' short'}">${paras(desc)}</div>` : ''}
       ${!isInfo && imp ? `<div class="xtra" hidden><div class="imp"><h4>IMPORTANT DETAILS</h4>${paras(imp)}</div></div>` : ''}
       ${desc || (!isInfo && imp) ? `<button type="button" class="more" data-l="${isInfo ? 'READ MORE' : 'VIEW MORE'}" hidden>${isInfo ? 'READ MORE' : 'VIEW MORE'} <span aria-hidden="true">▾</span></button>` : ''}
       ${isInfo && imp ? `<div class="imp"><h4>IMPORTANT DETAILS</h4>${paras(imp)}</div>` : ''}
       <div class="badges">
-        ${isInfo ? `<span class="b">🗓 POST DATE: ${fmt(p.created_at)}</span>` : ''}
-        ${!isInfo && p.event_date ? `<span class="b last">🗓 ${fmt(p.event_date)}</span>` : ''}
+        ${isInfo && p.kind !== 'info' ? `<span class="b">🗓 POST DATE: ${fmt(p.created_at)}</span>` : ''}
+        
         ${isInfo && p.last_date ? `<span class="b ${closed ? 'closed' : 'last'}">അവസാന തീയ്യതി: ${fmt(p.last_date)}${closed ? ' (അവസാനിച്ചു)' : ''}</span>` : ''}
         ${p.ref_no ? `<span class="b ref"># ${esc(p.ref_no)}</span>` : ''}
       </div>
@@ -353,8 +396,11 @@ function render(rows, demo){
   const prog = rows.filter(r => r.kind === 'program');
   const info = rows.filter(r => r.kind !== 'program' && r.kind !== 'job');
   const jobs = rows.filter(r => r.kind === 'job');
-  $('programs').innerHTML = prog.length ? prog.map(p => card(p, false)).join('') : EMPTY;
-  $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? info.map(p => card(p, true)).join('') : EMPTY);
+  $('programs').classList.toggle('tl', !!prog.length);
+  $('info').classList.toggle('tl', !!info.length);
+  $('programs').innerHTML = prog.length ? tl(prog, false, p => p.event_date ? fmt(p.event_date) : fmt(p.created_at)) : EMPTY;
+  $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? tl(info, true, p => fmt(p.created_at)) : EMPTY);
+  $('n-programs').textContent = prog.length; $('n-info').textContent = info.length; $('n-jobs').textContent = jobs.length;
   $('jobs').innerHTML = jobs.length ? jobs.map(p => card(p, true)).join('') : EMPTY;
   requestAnimationFrame(() => { wireMore($('info')); wireMore($('programs')); wireMore($('jobs')); });
 }
@@ -410,6 +456,11 @@ function gallery(){
   const sc = document.createElement('script'); sc.type = 'module'; sc.src = 'https://w.behold.so/widget.js'; sc.onerror = embed; document.body.appendChild(sc);
   box.innerHTML = `<behold-widget feed-id="${esc(CONFIG.BEHOLD_FEED_ID)}"></behold-widget>` + follow;
 }
+document.querySelectorAll('.stats a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth', block:'start'}); }));
+document.addEventListener('click', e => {
+  const z = e.target.closest('[data-zoom]');
+  if(z){ const d = document.createElement('div'); d.className = 'lb'; d.innerHTML = `<img src="${z.dataset.zoom}" alt=""><button type="button" aria-label="Close">×</button>`; d.onclick = () => d.remove(); document.body.appendChild(d); }
+});
 document.querySelectorAll('.nav a, .lg').forEach(a => a.addEventListener('click', e => {
   e.preventDefault();
   const h = a.getAttribute('href');
