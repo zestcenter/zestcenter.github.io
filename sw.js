@@ -1,6 +1,6 @@
 /* ZEST CENTER INFO – offline support. Pages load fresh when online, saved copy when offline. */
 const C = 'zest-v1';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'share-frame.jpg'];
+const CORE = ['./', 'index.html', 'app/', 'manifest.webmanifest', 'icon-192.png', 'share-frame.jpg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== C).map(x => caches.delete(x)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
