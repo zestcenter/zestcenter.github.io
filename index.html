@@ -90,6 +90,24 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(10px +
 .lb{position:fixed;inset:0;z-index:50;background:rgba(5,20,30,.92);display:flex;align-items:center;justify-content:center;padding:16px}
 .lb img{max-width:100%;max-height:100%;border-radius:10px}
 .lb button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--ink);font-size:22px;font-weight:800}
+/* projects marquee (right to left) */
+.pjw{margin:14px -16px 0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.pjt{display:flex;gap:12px;width:max-content;padding:4px 16px 8px;animation:pjm 45s linear infinite}
+.pjt .dup{display:flex;gap:12px}
+.pjw:hover .pjt,.pjw.hold .pjt{animation-play-state:paused}
+@keyframes pjm{to{transform:translateX(-50%)}}
+.pjc{flex:none;width:190px;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 6px 16px rgba(15,120,168,.08)}
+.pjc img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--tint)}
+.pjc h3{padding:10px 12px 12px;font-size:13.5px;font-weight:700;color:var(--p-dark);line-height:1.4;min-height:58px}
+@media (prefers-reduced-motion:reduce){.pjt{animation:none}.pjw{overflow-x:auto}}
+/* ABOUT ZEST button effect */
+.aboutbtn{position:relative;overflow:hidden;animation:abp 2.6s ease-in-out infinite}
+.aboutbtn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:abs 2.6s ease-in-out infinite}
+.aboutbtn svg{animation:aba 1.3s ease-in-out infinite}
+@keyframes abp{0%,100%{box-shadow:0 0 0 0 rgba(15,120,168,.45)}50%{box-shadow:0 0 0 9px rgba(15,120,168,0)}}
+@keyframes abs{0%,55%{left:-60%}100%{left:130%}}
+@keyframes aba{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.aboutbtn,.aboutbtn::after,.aboutbtn svg{animation:none}}
 section.blk{scroll-margin-top:100px}
 .hero{margin:16px;background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden}
 .hero img{display:block;width:100%;height:auto}
@@ -219,6 +237,14 @@ section.blk{margin:26px 16px 0}
 <section class="blk" id="sec-jobs">
   <h2 class="h">JOB CONNECT</h2>
   <div class="list" id="jobs"><div class="skel"></div></div>
+</section>
+
+<section class="blk" id="sec-projects">
+  <h2 class="h">ZEST PROJECTS</h2>
+  <p class="sub">ZESTന്റെ മുഖ്യ പദ്ധതികൾ</p>
+  <div class="pjw" aria-label="ZEST projects">
+    <div class="pjt"><div class="pjc"><img src="img/p-service.jpg" alt="" loading="lazy" decoding="async"><h3>സർവീസ് സെന്റർ</h3></div><div class="pjc"><img src="img/p-ideal.jpg" alt="" loading="lazy" decoding="async"><h3>ഐഡിയൽ സ്റ്റുഡന്റസ് ബാച്ച്</h3></div><div class="pjc"><img src="img/p-women.jpg" alt="" loading="lazy" decoding="async"><h3>വുമൺ എംപവർമെന്റ് പ്രോഗ്രാം</h3></div><div class="pjc"><img src="img/p-library.jpg" alt="" loading="lazy" decoding="async"><h3>ലൈബ്രറി &amp; റീഡിങ് റൂം</h3></div><div class="pjc"><img src="img/p-kalimuttam.jpg" alt="" loading="lazy" decoding="async"><h3>കിഡ്സ്‌ ഡെവലപ്പ്മെന്റ് പ്രോഗ്രാംസ് - കളിമുറ്റം</h3></div><div class="pjc"><img src="img/p-turf.jpg" alt="" loading="lazy" decoding="async"><h3>ഫുട്ബോൾ ടർഫ്</h3></div><div class="pjc"><img src="img/p-senior.jpg" alt="" loading="lazy" decoding="async"><h3>സീനിയർ സിറ്റിസൺ കോർണർ</h3></div><div class="pjc"><img src="img/p-kidspark.jpg" alt="" loading="lazy" decoding="async"><h3>കിഡ്സ്‌ പാർക്ക്‌</h3></div><div class="pjc"><img src="img/p-playground.jpg" alt="" loading="lazy" decoding="async"><h3>സ്ത്രീകളുടെ കളിസ്ഥലം</h3></div><div class="dup" aria-hidden="true"><div class="pjc"><img src="img/p-service.jpg" alt="" loading="lazy" decoding="async"><h3>സർവീസ് സെന്റർ</h3></div><div class="pjc"><img src="img/p-ideal.jpg" alt="" loading="lazy" decoding="async"><h3>ഐഡിയൽ സ്റ്റുഡന്റസ് ബാച്ച്</h3></div><div class="pjc"><img src="img/p-women.jpg" alt="" loading="lazy" decoding="async"><h3>വുമൺ എംപവർമെന്റ് പ്രോഗ്രാം</h3></div><div class="pjc"><img src="img/p-library.jpg" alt="" loading="lazy" decoding="async"><h3>ലൈബ്രറി &amp; റീഡിങ് റൂം</h3></div><div class="pjc"><img src="img/p-kalimuttam.jpg" alt="" loading="lazy" decoding="async"><h3>കിഡ്സ്‌ ഡെവലപ്പ്മെന്റ് പ്രോഗ്രാംസ് - കളിമുറ്റം</h3></div><div class="pjc"><img src="img/p-turf.jpg" alt="" loading="lazy" decoding="async"><h3>ഫുട്ബോൾ ടർഫ്</h3></div><div class="pjc"><img src="img/p-senior.jpg" alt="" loading="lazy" decoding="async"><h3>സീനിയർ സിറ്റിസൺ കോർണർ</h3></div><div class="pjc"><img src="img/p-kidspark.jpg" alt="" loading="lazy" decoding="async"><h3>കിഡ്സ്‌ പാർക്ക്‌</h3></div><div class="pjc"><img src="img/p-playground.jpg" alt="" loading="lazy" decoding="async"><h3>സ്ത്രീകളുടെ കളിസ്ഥലം</h3></div></div></div>
+  </div>
 </section>
 
 <section class="blk">
@@ -458,6 +484,10 @@ function gallery(){
   const sc = document.createElement('script'); sc.type = 'module'; sc.src = 'https://w.behold.so/widget.js'; sc.onerror = embed; document.body.appendChild(sc);
   box.innerHTML = `<behold-widget feed-id="${esc(CONFIG.BEHOLD_FEED_ID)}"></behold-widget>` + follow;
 }
+(function(){ const w = document.querySelector('.pjw'); if(!w) return;
+  w.addEventListener('touchstart', () => w.classList.add('hold'), {passive:true});
+  ['touchend','touchcancel'].forEach(t => w.addEventListener(t, () => w.classList.remove('hold'), {passive:true}));
+})();
 document.querySelectorAll('.stats a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth', block:'start'}); }));
 document.addEventListener('click', e => {
   const z = e.target.closest('[data-zoom]');
