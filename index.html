@@ -279,6 +279,7 @@ function wireMore(root){
   });
 }
 const isNew = p => p.created_at && (Date.now() - new Date(p.created_at)) < 3 * 864e5;
+const lastLbl = p => p.last_date ? `LAST DATE · ${fmt(p.last_date)}` : `POSTED · ${fmt(p.created_at)}`;
 const tl = (rows, isInfo, dateOf) => rows.map(p => `<div class="tli${isNew(p) ? ' new' : ''}"><div class="tld">${dateOf(p)}</div>${card(p, isInfo)}</div>`).join('');
 function card(p, isInfo){
   const lines = String(p.body || '').trim().split(/\r?\n/);
@@ -398,10 +399,11 @@ function render(rows, demo){
   const jobs = rows.filter(r => r.kind === 'job');
   $('programs').classList.toggle('tl', !!prog.length);
   $('info').classList.toggle('tl', !!info.length);
-  $('programs').innerHTML = prog.length ? tl(prog, false, p => p.event_date ? fmt(p.event_date) : fmt(p.created_at)) : EMPTY;
-  $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? tl(info, true, p => fmt(p.created_at)) : EMPTY);
+  $('programs').innerHTML = prog.length ? tl(prog, false, p => p.event_date ? `PROGRAM DATE · ${fmt(p.event_date)}` : `POSTED · ${fmt(p.created_at)}`) : EMPTY;
+  $('info').innerHTML = (demo ? '<div class="demo">Demo data – add Supabase keys in CONFIG</div>' : '') + (info.length ? tl(info, true, lastLbl) : EMPTY);
   $('n-programs').textContent = prog.length; $('n-info').textContent = info.length; $('n-jobs').textContent = jobs.length;
-  $('jobs').innerHTML = jobs.length ? jobs.map(p => card(p, true)).join('') : EMPTY;
+  $('jobs').classList.toggle('tl', !!jobs.length);
+  $('jobs').innerHTML = jobs.length ? tl(jobs, true, lastLbl) : EMPTY;
   requestAnimationFrame(() => { wireMore($('info')); wireMore($('programs')); wireMore($('jobs')); });
 }
 const DEMO = [
